@@ -258,8 +258,8 @@ func GetItems(db *gorm.DB) func(*gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"data":  result,
-			"total": paging,
+			"data":   result,
+			"paging": paging,
 		})
 	}
 }

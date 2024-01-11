@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql/driver"
 	"errors"
+	"first-app/common"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -119,22 +120,6 @@ type TodoItemUpdate struct {
 
 func (TodoItemUpdate) TableName() string {
 	return ToDoItem{}.TableName()
-}
-
-type Paging struct {
-	Page  int   `json:"page" form:"page"`
-	Limit int   `json:"limit" form:"limit"`
-	Total int64 `json:"total" form:"-"`
-}
-
-func (p *Paging) Process() {
-	if p.Page <= 0 {
-		p.Page = 1
-	}
-
-	if p.Limit <= 0 || p.Limit >= 100 {
-		p.Limit = 10
-	}
 }
 
 func main() {
@@ -298,7 +283,7 @@ func DeleteItem(db *gorm.DB) func(ctx *gin.Context) {
 
 func GetItems(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var paging Paging
+		var paging common.Paging
 
 		if err := c.ShouldBind(&paging); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

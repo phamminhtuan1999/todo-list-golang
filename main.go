@@ -13,7 +13,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type ItemStatus int
@@ -89,12 +88,10 @@ func (item *ItemStatus) MarshalJSON() ([]byte, error) {
 }
 
 type ToDoItem struct {
-	Id          int         `json:"id" gorm:"column:id"`
+	common.SQLModel
 	Title       string      `json:"title" gorm:"column:title"`
 	Description string      `json:"description" gorm:"column:description"`
 	Status      *ItemStatus `json:"status" gorm:"column:status"`
-	CreatedAt   *time.Time  `json:"created_at" gorm:"column:created_at"`
-	UpdatedAt   *time.Time  `json:"updated_at,omitempty" gorm:"column:updated_at"`
 }
 
 func (ToDoItem) TableName() string {
@@ -175,9 +172,7 @@ func CreateItem(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": data.Id,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 	}
 }
 
@@ -203,9 +198,7 @@ func GetItem(db *gorm.DB) func(ctx *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": data,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }
 
@@ -239,9 +232,7 @@ func UpdateItem(db *gorm.DB) func(ctx *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
 
@@ -275,9 +266,7 @@ func DeleteItem(db *gorm.DB) func(ctx *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
 
@@ -318,10 +307,7 @@ func GetItems(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data":   result,
-			"paging": paging,
-		})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
 	}
 }
 
@@ -371,7 +357,7 @@ func demoStructure() {
 }
 
 func demoVariable() {
-	var email string = "tuan_pham@datahouse.com"
+	var email = "tuan_pham@datahouse.com"
 	fmt.Printf("%T", email)
 	fmt.Println()
 }
